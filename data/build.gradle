@@ -1,52 +1,37 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
+    androidExtensions { experimental = true }
+
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
 
     defaultConfig {
-        applicationId "app.web.drjackycv.currencyfair"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
         testInstrumentationRunner rootProject.ext.testInstrumentationRunner
-        javaCompileOptions.annotationProcessorOptions.arguments =
-                ["room.schemaLocation": "$projectDir/schemas".toString()]
-    }
-    sourceSets {
-        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
-        main.java.srcDirs += 'src/main/kotlin'
-        androidTest.java.srcDirs += 'src/androidTest/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-    }
-    buildTypes {
-        release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        consumerProguardFiles 'consumer-rules.pro'
     }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
-    lintOptions.abortOnError = false
-    testOptions.unitTests.returnDefaultValues = true
-    packagingOptions {
-        exclude 'META-INF/rxjava.properties'
-        exclude 'META-INF/proguard/androidx-annotations.pro'
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
-}
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
 
-afterEvaluate {
-    android.sourceSets.all { sourceSet ->
-        // Ensure Kt ain't used in production code
-        if (!sourceSet.name.startsWith("test"))
-            sourceSet.kotlin.setSrcDirs([])
-    }
 }
 
 dependencies {
@@ -70,11 +55,10 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timberVersion"
     implementation "com.google.android.material:material:$materialVersion"
     //test
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoCoreVersion"
+    testImplementation "org.mockito:mockito-inline:$mockitoInlineVersion"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
 
-    implementation project(':presentation')
     implementation project(':domain')
-    implementation project(':data')
 }
