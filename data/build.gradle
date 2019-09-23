@@ -26,8 +26,12 @@ android {
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"https://api.flickr.com/services/rest\""
+        }
         release {
             minifyEnabled true
+            buildConfigField "String", "BASE_URL", "\"https://api.flickr.com/services/rest\""
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

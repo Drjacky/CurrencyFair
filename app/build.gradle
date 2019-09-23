@@ -23,6 +23,14 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            debuggable true
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-DEBUG"
+            signingConfig android.signingConfigs.debug
+        }
         release {
             minifyEnabled true
             shrinkResources true
