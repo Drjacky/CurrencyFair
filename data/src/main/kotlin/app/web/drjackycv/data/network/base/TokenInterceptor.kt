@@ -1,4 +1,4 @@
-package app.web.drjackycv.data.network
+package app.web.drjackycv.data.network.base
 
 import app.web.drjackycv.data.network.constant.DataConstants.ACCESS_KEY_KEY
 import app.web.drjackycv.data.network.constant.DataConstants.ACCESS_KEY_VALUE

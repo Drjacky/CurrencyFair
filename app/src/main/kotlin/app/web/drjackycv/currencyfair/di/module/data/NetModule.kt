@@ -1,7 +1,7 @@
 package app.web.drjackycv.currencyfair.di.module.data
 
-import app.web.drjackycv.data.network.BaseHttpClient
-import app.web.drjackycv.data.network.BaseRetrofit
+import app.web.drjackycv.data.network.base.BaseHttpClient
+import app.web.drjackycv.data.network.base.BaseRetrofit
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

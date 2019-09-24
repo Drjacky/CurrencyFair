@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 
 android {
     androidExtensions { experimental = true }
@@ -58,6 +59,8 @@ dependencies {
     //other
     implementation "com.jakewharton.timber:timber:$timberVersion"
     implementation "com.google.android.material:material:$materialVersion"
+    //db
+    kapt "dk.ilios:realmfieldnameshelper:$realmFieldNamesHelperVersion"
     //test
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoCoreVersion"

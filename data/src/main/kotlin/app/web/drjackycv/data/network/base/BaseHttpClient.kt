@@ -1,4 +1,4 @@
-package app.web.drjackycv.data.network
+package app.web.drjackycv.data.network.base
 
 import app.web.drjackycv.data.BuildConfig.DEBUG
 import okhttp3.OkHttpClient
