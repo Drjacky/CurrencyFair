@@ -7,15 +7,15 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 interface PhotoDatabaseModel : ResponseObject<Photo> {
-    val id: String
-    val owner: String
-    val secret: String
-    val server: String
-    val farm: Int
-    val title: String
-    val ispublic: Int
-    val isfriend: Int
-    val isfamily: Int
+    var id: String
+    var owner: String
+    var secret: String
+    var server: String
+    var farm: Int
+    var title: String
+    var ispublic: Int
+    var isfriend: Int
+    var isfamily: Int
 
     override fun toDomain(): Photo =
         Photo(
@@ -35,15 +35,15 @@ interface PhotoDatabaseModel : ResponseObject<Photo> {
 @RealmClass
 open class PhotoDatabase(
     @PrimaryKey
-    override val id: String,
-    override val owner: String,
-    override val secret: String,
-    override val server: String,
-    override val farm: Int,
-    override val title: String,
-    override val ispublic: Int,
-    override val isfriend: Int,
-    override val isfamily: Int
+    override var id: String,
+    override var owner: String,
+    override var secret: String,
+    override var server: String,
+    override var farm: Int,
+    override var title: String,
+    override var ispublic: Int,
+    override var isfriend: Int,
+    override var isfamily: Int
 ) : RealmModel, PhotoDatabaseModel {
 
     constructor() : this("-1", "", "", "", -1, "", -1, -1, -1)

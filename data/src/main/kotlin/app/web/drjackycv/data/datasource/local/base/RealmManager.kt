@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package app.web.drjackycv.data.util
+package app.web.drjackycv.data.datasource.local.base
 
 import io.realm.Realm
 
