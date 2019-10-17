@@ -18,10 +18,6 @@ sealed class Failure(var retryAction: () -> Unit) : Throwable() {
 
     object Unauthorized : Failure({})
 
-    object NotInDatabase : Failure({})
-
-    object NoLogin : Failure({})
-
     object NotFound : Failure({})
 
 }

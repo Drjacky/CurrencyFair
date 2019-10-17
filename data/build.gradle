@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
 
 android {
     androidExtensions { experimental = true }
@@ -28,11 +27,13 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", "\"https://api.flickr.com/services/rest\""
+            buildConfigField "String", "API_KEY", "\"e912c9fa2ff261c782e9449b87985bab\""
+            buildConfigField "String", "BASE_URL", "\"https://api.flickr.com/services/rest/\""
         }
         release {
             minifyEnabled true
-            buildConfigField "String", "BASE_URL", "\"https://api.flickr.com/services/rest\""
+            buildConfigField "String", "API_KEY", "\"e912c9fa2ff261c782e9449b87985bab\""
+            buildConfigField "String", "BASE_URL", "\"https://api.flickr.com/services/rest/\""
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -59,8 +60,13 @@ dependencies {
     //other
     implementation "com.jakewharton.timber:timber:$timberVersion"
     implementation "com.google.android.material:material:$materialVersion"
+    //ui
+    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+    implementation "androidx.paging:paging-rxjava2:$pagingVersion"
     //db
-    kapt "dk.ilios:realmfieldnameshelper:$realmFieldNamesHelperVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-common:$roomVersion"
     //test
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoCoreVersion"
@@ -68,4 +74,5 @@ dependencies {
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
 
     implementation project(':domain')
+
 }

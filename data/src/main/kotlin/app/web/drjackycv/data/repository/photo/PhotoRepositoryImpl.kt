@@ -1,21 +1,44 @@
 package app.web.drjackycv.data.repository.photo
 
-import app.web.drjackycv.data.datasource.local.photo.PhotoLocalDataSource
+import androidx.paging.PagedList
+import androidx.paging.RxPagedListBuilder
 import app.web.drjackycv.data.datasource.remote.photo.PhotoRemoteDataSource
+import app.web.drjackycv.data.datasource.remote.photo.PhotoRemoteDataSourceFactory
 import app.web.drjackycv.domain.entity.photo.Photo
 import app.web.drjackycv.domain.repository.photo.PhotoRepository
-import io.reactivex.Single
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import javax.inject.Inject
 
 class PhotoRepositoryImpl @Inject constructor(
-    private val photoLocalDataSource: PhotoLocalDataSource,
     private val photoRemoteDataSource: PhotoRemoteDataSource
 ) : PhotoRepository {
 
-    override fun getLocalPhotosListByTag(tags: String): Single<List<Photo>> =
-        photoLocalDataSource.getPhotosListByTags(tags = tags)
+    override fun getRemotePhotosListByTag(
+        tags: String
+    ): Flowable<PagedList<Photo>> {
+        val dataFactory = PhotoRemoteDataSourceFactory(tags, photoRemoteDataSource)
+        val config = PagedList.Config.Builder()
+            .setPageSize(25)
+            .setInitialLoadSizeHint(25)
+            .setEnablePlaceholders(false)
+            .build()
 
-    override fun getRemotePhotosListByTag(tags: String, page: Int): Single<List<Photo>> =
-        photoRemoteDataSource.getPhotosListByTags(tags = tags, page = page)
+        return RxPagedListBuilder(dataFactory, config).buildFlowable(BackpressureStrategy.BUFFER)
+    }
+
+    override fun getPhotoUrl(
+        farm: Int,
+        server: String,
+        id: String,
+        secret: String,
+        size: String
+    ): String = photoRemoteDataSource.getPhotoUrl(
+        farm = farm,
+        server = server,
+        id = id,
+        secret = secret,
+        size = size
+    )
 
 }

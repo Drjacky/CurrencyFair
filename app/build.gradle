@@ -2,11 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
 
 android {
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
 
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "app.web.drjackycv.currencyfair"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -78,6 +80,13 @@ dependencies {
     //other
     implementation "com.jakewharton.timber:timber:$timberVersion"
     implementation "com.google.android.material:material:$materialVersion"
+    //ui
+    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+    implementation "androidx.paging:paging-rxjava2:$pagingVersion"
+    //db
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-common:$roomVersion"
     //test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

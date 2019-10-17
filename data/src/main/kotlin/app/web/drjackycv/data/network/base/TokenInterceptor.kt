@@ -16,9 +16,8 @@ class TokenInterceptor @Inject constructor() : Interceptor {
         val originalRequest = chain.request()
         val httpUrl = originalRequest.url
         val newHttpUrl = httpUrl.newBuilder()
-            //TODO: Request automatically for new token when this one expired
             .addQueryParameter(ACCESS_KEY_KEY, ACCESS_KEY_VALUE)
-            .addQueryParameter(REQUEST_FORMAT_VALUE, REQUEST_FORMAT_KEY)
+            .addQueryParameter(REQUEST_FORMAT_KEY, REQUEST_FORMAT_VALUE)
             .addQueryParameter(NO_JSON_CALLBACK_KEY, NO_JSON_CALLBACK_VALUE)
             .build()
         val requestBuilder = originalRequest.newBuilder().url(newHttpUrl)

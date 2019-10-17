@@ -33,34 +33,34 @@ open class BaseRemoteDataSource {
     private val retry = 1
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    fun <RO : ResponseObject<DO>, DO : Any> modifySingleList(
-        single: Single<Result<List<RO>>>,
+    fun <RO : ResponseObject<DO>, DO : Any> modifySingle(
+        single: Single<Result<RO>>,
         timeoutTime: Long = timeout,
         retryTimes: Int = retry,
         codeErrorHandler: ((Int) -> Failure)? = null,
         reasonErrorHandler: ((Failure) -> Failure)? = null
-    ): Single<List<DO>> =
+    ): Single<DO> =
         single
             .onErrorResumeNext {
                 Single.error(getFailureUnknownError())
             }
             .flatMap { data ->
-                Single.create<List<DO>> { emitter ->
+                Single.create<DO> { emitter ->
 
                     val checkCodeError = codeErrorHandler != null
                     val checkReasonError = reasonErrorHandler != null
 
-                    if (data.response() == null) Timber.e("BaseRemoteDataSource: modifySingleList ${data.error().toString()}")
+                    if (data.response() == null) Timber.e("BaseRemoteDataSource: modifySingle ${data.error().toString()}")
 
                     data.response()?.let { response ->
-                        val body: List<RO>? = response.body()
+                        val body: RO? = response.body()
                         val code = response.code()
                         val errorBody = response.errorBody()
 
                         if (emitter.isDisposed.not()) {
                             when {
                                 response.isSuccessful && body != null -> emitter.onSuccess(
-                                    getDomainObjectList(body)
+                                    getDomainObject(body)
                                 )
                                 response.isSuccessful && body == null -> emitter.onSuccess(
                                     getDomainObjectNoResponse(code)
@@ -88,7 +88,7 @@ open class BaseRemoteDataSource {
                     }
 
                 }
-            }.timeout(timeoutTime, TimeUnit.SECONDS, Single.create<List<DO>> { emitter ->
+            }.timeout(timeoutTime, TimeUnit.SECONDS, Single.create<DO> { emitter ->
                 if (emitter.isDisposed.not()) {
                     emitter.tryOnError(getFailureTimeout())
                 }
@@ -97,8 +97,8 @@ open class BaseRemoteDataSource {
             }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <RO : ResponseObject<DO>, DO : Any> getDomainObjectList(body: List<RO>): List<DO> =
-        (body as List<ResponseObject<Any>>).map { it.toDomain() } as List<DO>
+    private fun <RO : ResponseObject<DO>, DO : Any> getDomainObject(body: RO): DO =
+        (body as ResponseObject<Any>).toDomain() as DO
 
     @Suppress("UNCHECKED_CAST")
     private fun <DO : Any> getDomainObjectNoResponse(code: Int): DO =

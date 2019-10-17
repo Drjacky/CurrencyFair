@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">presentation</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="full_error">Error!</string>
+    <string name="empty_list">Empty!</string>
+    <string name="retry">Retry</string>
+    <string name="network_error">Network Error!</string>
+    <string name="ok">OK!</string>
+    <string name="search">Search…</string>
 </resources>
