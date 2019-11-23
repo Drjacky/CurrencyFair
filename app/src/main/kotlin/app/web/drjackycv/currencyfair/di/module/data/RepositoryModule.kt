@@ -1,14 +1,20 @@
 package app.web.drjackycv.currencyfair.di.module.data
 
+import app.web.drjackycv.data.datasource.remote.photo.PhotoRemoteDataSource
 import app.web.drjackycv.data.repository.photo.PhotoRepositoryImpl
 import app.web.drjackycv.domain.repository.photo.PhotoRepository
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
+import java.util.concurrent.Executors
 
 @Module
-abstract class RepositoryModule {
+class RepositoryModule {
 
-    @Binds
-    abstract fun photo(photoRepositoryImpl: PhotoRepositoryImpl): PhotoRepository
+    @Suppress("PrivatePropertyName")
+    private val NETWORK_IO = Executors.newFixedThreadPool(5)
+
+    @Provides
+    fun photo(photoRemoteDataSource: PhotoRemoteDataSource): PhotoRepository =
+        PhotoRepositoryImpl(photoRemoteDataSource, NETWORK_IO)
 
 }

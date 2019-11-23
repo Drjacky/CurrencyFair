@@ -1,7 +1,9 @@
 package app.web.drjackycv.currencyfair.di.module.data
 
+import app.web.drjackycv.data.datasource.remote.photo.PhotoRemoteDataSource
 import app.web.drjackycv.data.network.base.BaseHttpClient
 import app.web.drjackycv.data.network.base.BaseRetrofit
+import app.web.drjackycv.data.network.photo.PhotoApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -28,5 +30,9 @@ class NetModule {
     @Singleton
     fun retrofit(baseRetrofit: BaseRetrofit): Retrofit =
         baseRetrofit.retrofit
+
+    @Provides
+    @Singleton
+    fun provideApiSource(api: PhotoApi): PhotoRemoteDataSource = PhotoRemoteDataSource(api)
 
 }
