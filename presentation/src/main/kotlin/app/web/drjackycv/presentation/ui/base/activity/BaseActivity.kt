@@ -16,11 +16,13 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activityLayout)
-        childFragment?.let { pushChildStack(it) }
+        if (savedInstanceState == null)
+            childFragment?.let { pushChildStack(it) }
     }
 
     protected fun pushChildStack(fragment: BaseFragment) {
-        if (isFinishing.not()) {
+        val fm = supportFragmentManager
+        if (isFinishing.not() && fm.findFragmentById(R.id.parentContainer) == null) {
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.parentContainer, fragment, fragment::class.java.simpleName)
