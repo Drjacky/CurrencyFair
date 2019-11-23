@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
+import app.web.drjackycv.domain.entity.base.NetworkState
 import app.web.drjackycv.domain.entity.photo.Photo
 import app.web.drjackycv.domain.usecase.photo.GetPhotoUrlUseCase
 import app.web.drjackycv.presentation.R
+import app.web.drjackycv.presentation.entity.photo.PhotoUI
 import app.web.drjackycv.presentation.extension.hideKeyboard
 import app.web.drjackycv.presentation.extension.observe
 import app.web.drjackycv.presentation.extension.viewModel
@@ -22,9 +24,11 @@ class PhotoFragment : BaseFragment() {
 
     private lateinit var photoViewModel: PhotoViewModel
     private val photosAdapter: PhotosAdapter by lazy {
-        PhotosAdapter(getPhotoUrlUseCase) { photo ->
-            pushStack(PhotoDetailFragment.getFragment(photo))
-        }
+        PhotosAdapter(
+            getPhotoUrlUseCase,
+            ::goToPhotoDetail,
+            ::retry
+        )
     }
 
     override var fragmentLayout: Int = R.layout.fragment_home
@@ -37,6 +41,8 @@ class PhotoFragment : BaseFragment() {
     private fun setupUI() {
         photoViewModel = viewModel(viewModelFactory.get()) {
             observe(ldPhotos, ::addPhotos)
+            observe(ldNetworkState, ::setupNetworkState)
+            observe(ldRefreshState, ::setupSwipeRefresh)
         }
 
         recyclerView.layoutManager = GridLayoutManager(context, 2)
@@ -45,13 +51,31 @@ class PhotoFragment : BaseFragment() {
 
         searchBtn.setOnClickListener {
             hideKeyboard()
-            if (searchTagsTxv.text.isNotBlank())
-                photoViewModel.getPhotosList(searchTagsTxv.text.toString())
+            photoViewModel.getPhotosList(searchTagsTxv.text.toString())
         }
+    }
+
+    private fun setupSwipeRefresh(networkState: NetworkState) {
+        swipeRefresh.isRefreshing = networkState == NetworkState.LOADING
+        swipeRefresh.setOnRefreshListener {
+            photoViewModel.refresh()
+        }
+    }
+
+    private fun setupNetworkState(networkState: NetworkState) {
+        photosAdapter.setNetworkState(networkState)
     }
 
     private fun addPhotos(photos: PagedList<Photo>) {
         photosAdapter.submitList(photos)
+    }
+
+    private fun goToPhotoDetail(photo: PhotoUI) {
+        pushStack(PhotoDetailFragment.getFragment(photo))
+    }
+
+    private fun retry() {
+        photoViewModel.retry()
     }
 
     companion object {
