@@ -4,7 +4,6 @@ import app.web.drjackycv.data.datasource.remote.base.BaseRemoteDataSource
 import app.web.drjackycv.data.network.photo.PhotoApi
 import app.web.drjackycv.domain.entity.photo.PhotosParent
 import app.web.drjackycv.domain.usecase.photo.GetPhotoUrlUseCaseParams
-import io.reactivex.Single
 import javax.inject.Inject
 
 class PhotoRemoteDataSource @Inject constructor(
@@ -13,13 +12,20 @@ class PhotoRemoteDataSource @Inject constructor(
 
     fun getPhotosListByTags(
         tags: String,
-        page: Int = 0
-    ): Single<PhotosParent> {
-        return modifySingle(
-            photoApi.getPhotosListByTag(
-                tags = tags,
-                page = page
-            )
+        page: Int = 0,
+        perPage: Int,
+        onPrepared: () -> Unit,
+        onSuccess: (PhotosParent?) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val request = photoApi.getPhotosListByTag(
+            tags = tags,
+            page = page,
+            perPage = perPage
+        )
+        onPrepared()
+        syncRequest(
+            request, onSuccess, onError
         )
     }
 

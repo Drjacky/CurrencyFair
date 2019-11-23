@@ -1,12 +1,11 @@
 package app.web.drjackycv.domain.repository.photo
 
-import androidx.paging.PagedList
+import app.web.drjackycv.domain.entity.base.Listing
 import app.web.drjackycv.domain.entity.photo.Photo
-import io.reactivex.Flowable
 
 interface PhotoRepository {
 
-    fun getRemotePhotosListByTag(tags: String): Flowable<PagedList<Photo>>
+    fun getRemotePhotosListByTag(tags: String): Listing<Photo>
 
     fun getPhotoUrl(
         farm: Int,

@@ -1,17 +1,16 @@
 package app.web.drjackycv.domain.usecase.photo
 
-import androidx.paging.PagedList
+import app.web.drjackycv.domain.entity.base.Listing
 import app.web.drjackycv.domain.entity.photo.Photo
 import app.web.drjackycv.domain.repository.photo.PhotoRepository
-import app.web.drjackycv.domain.usecase.base.FlowableUseCase
-import io.reactivex.Flowable
+import app.web.drjackycv.domain.usecase.base.GeneralUseCase
 import javax.inject.Inject
 
 class GetRemotePhotosByTagUseCase @Inject constructor(
     private val photoRepository: PhotoRepository
-) : FlowableUseCase<PagedList<Photo>, GetRemotePhotosByTagParams> {
+) : GeneralUseCase<Listing<Photo>, GetRemotePhotosByTagParams> {
 
-    override fun invoke(params: GetRemotePhotosByTagParams): Flowable<PagedList<Photo>> =
+    override fun invoke(params: GetRemotePhotosByTagParams): Listing<Photo> =
         photoRepository.getRemotePhotosListByTag(
             tags = params.tags
         )

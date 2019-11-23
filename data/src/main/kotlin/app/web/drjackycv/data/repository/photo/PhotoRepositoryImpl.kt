@@ -1,30 +1,40 @@
 package app.web.drjackycv.data.repository.photo
 
+import androidx.annotation.MainThread
+import androidx.lifecycle.Transformations.switchMap
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
 import app.web.drjackycv.data.datasource.remote.photo.PhotoRemoteDataSource
 import app.web.drjackycv.data.datasource.remote.photo.PhotoRemoteDataSourceFactory
+import app.web.drjackycv.domain.entity.base.Listing
 import app.web.drjackycv.domain.entity.photo.Photo
 import app.web.drjackycv.domain.repository.photo.PhotoRepository
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class PhotoRepositoryImpl @Inject constructor(
-    private val photoRemoteDataSource: PhotoRemoteDataSource
+    private val photoRemoteDataSource: PhotoRemoteDataSource,
+    private val networkExecutor: Executor
 ) : PhotoRepository {
 
+    @MainThread
     override fun getRemotePhotosListByTag(
         tags: String
-    ): Flowable<PagedList<Photo>> {
-        val dataFactory = PhotoRemoteDataSourceFactory(tags, photoRemoteDataSource)
-        val config = PagedList.Config.Builder()
-            .setPageSize(25)
-            .setInitialLoadSizeHint(25)
-            .setEnablePlaceholders(false)
+    ): Listing<Photo> {
+        val factory = photoRemoteDataSourceFactory(tags)
+        val config = pagedListConfig()
+        val livePagedList = LivePagedListBuilder(factory, config)
+            .setFetchExecutor(networkExecutor)
             .build()
 
-        return RxPagedListBuilder(dataFactory, config).buildFlowable(BackpressureStrategy.BUFFER)
+        return Listing(
+            pagedList = livePagedList,
+            networkState = switchMap(factory.source) { it.network },
+            retry = { factory.source.value?.retryAllFailed() },
+            refresh = { factory.source.value?.invalidate() },
+            refreshState = switchMap(factory.source) { it.initial }
+        )
+
     }
 
     override fun getPhotoUrl(
@@ -40,5 +50,16 @@ class PhotoRepositoryImpl @Inject constructor(
         secret = secret,
         size = size
     )
+
+    private fun photoRemoteDataSourceFactory(tags: String) =
+        PhotoRemoteDataSourceFactory(tags, photoRemoteDataSource, networkExecutor)
+
+    private fun pagedListConfig(pageSize: Int = 25): PagedList.Config {
+        return PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(pageSize * 2)
+            .setPageSize(pageSize)
+            .build()
+    }
 
 }
